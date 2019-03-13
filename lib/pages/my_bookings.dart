@@ -28,7 +28,7 @@ class MyBookingsPageState extends State<MyBookingsPage> {
           title: Text('My Bookings'),
         ),
         body: Column(
-          children: [Expanded(child: PostDisplayer())],
+          children: [Expanded(child: PostDisplayer("CHANGE THIS"))],
         ));
   }
 }

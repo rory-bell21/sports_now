@@ -9,40 +9,48 @@ import '../types/post.dart';
 //import 'types/post.dart';
 
 class PostDisplayer extends StatelessWidget {
+  String filter;
+  PostDisplayer(this.filter);
+
   //method
   Widget _buildPostItem(BuildContext context, int index) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
       final Post currPost = model.allPosts[index];
-      return Card(
-        child: Row(
-          children: <Widget>[
-            Flexible(child: Image.network(currPost.img)),
-            Column(
-              children: <Widget>[
-                Text("IDD: " + currPost.id),
-                Text("Title: " + currPost.title),
-                Text("Price: " + currPost.price.toString()),
-                Text("Description: " + currPost.description),
-                ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                        child: Text('Book'),
-                        onPressed: () {
-                          model.selectPost(index);
-                          Navigator.pushNamed<bool>(
-                              context, '/post/' + index.toString());
-                        }
-                        //specifying a page to push to stack?,
-                        )
-                  ],
-                ),
-              ],
-            )
-          ],
-        ),
-      );
+      if (filter == null ||
+          filter == "" ||
+          currPost.title.toLowerCase().contains(filter.toLowerCase())) {
+        return Card(
+          child: Row(
+            children: <Widget>[
+              Flexible(child: Image.network(currPost.img)),
+              Column(
+                children: <Widget>[
+                  Text("IDD: " + currPost.id),
+                  Text("Title: " + currPost.title),
+                  Text("Price: " + currPost.price.toString()),
+                  Text("Description: " + currPost.description),
+                  ButtonBar(
+                    alignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      RaisedButton(
+                          child: Text('Book'),
+                          onPressed: () {
+                            model.selectPost(index);
+                            Navigator.pushNamed<bool>(
+                                context, '/post/' + index.toString());
+                          }
+                          //specifying a page to push to stack?,
+                          )
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      }
+      return Card();
     });
   }
 

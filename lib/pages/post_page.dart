@@ -52,7 +52,7 @@ class PostPage extends StatelessWidget {
         final Post currPost = model.allPosts[index];
         return Scaffold(
           appBar: AppBar(
-            title: Text(currPost.title),
+            title: Text("Book Now!"),
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,13 +60,21 @@ class PostPage extends StatelessWidget {
               Image.network(currPost.img),
               Container(
                 padding: EdgeInsets.all(10.0),
-                child: Text(currPost.title),
+                child: Text("Title" + currPost.title),
+              ),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text("Price" + currPost.price.toString()),
+              ),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text("Description" + currPost.description),
               ),
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: RaisedButton(
                   color: Theme.of(context).accentColor,
-                  child: Text('DELETE'),
+                  child: Text('BOOK'),
                   onPressed: () => _showWarningDialog(context),
                 ),
               )

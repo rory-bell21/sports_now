@@ -7,7 +7,7 @@ import '../Other/post_displayer.dart';
 
 //import '../posts.dart';
 
-//this is the main page
+//this is the main page to scroll through posts
 class PostListPage extends StatefulWidget {
   final MainModel model;
   PostListPage(this.model);
@@ -18,10 +18,23 @@ class PostListPage extends StatefulWidget {
 }
 
 class PostListPageState extends State<PostListPage> {
+  TextEditingController controller = new TextEditingController();
+  String filter;
   @override
   void initState() {
+    controller.addListener(() {
+      setState(() {
+        filter = controller.text;
+      });
+    });
     widget.model.fetchAllPosts();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -32,7 +45,13 @@ class PostListPageState extends State<PostListPage> {
           title: Text('SportsNow'),
         ),
         body: Column(
-          children: [Expanded(child: PostDisplayer())],
+          children: [
+            TextField(
+              decoration: new InputDecoration(labelText: "Search something"),
+              controller: controller,
+            ),
+            Expanded(child: PostDisplayer(filter))
+          ],
         ));
   }
 }

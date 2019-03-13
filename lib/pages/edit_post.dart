@@ -30,6 +30,32 @@ class _PostEditPageState extends State<PostEditPage> {
     "image":
         'https://i1.wp.com/www.benaco.ca/wp-content/uploads/2015/10/05.jpg?fit=954%2C537'
   };
+  //METHOD need this to delete current post and return to edit page
+  _showWarningDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('This action cannot be undone!'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('DISCARD'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text('CONTINUE'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context, true);
+                },
+              ),
+            ],
+          );
+        });
+  }
 
 //METHOD
   void _submitForm(Function updatePost) {
@@ -185,6 +211,14 @@ class _PostEditPageState extends State<PostEditPage> {
                     height: 10.0,
                   ),
                   _buildSubmitButton(),
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: RaisedButton(
+                      color: Colors.redAccent,
+                      child: Text('DELETE Does not work'),
+                      onPressed: () => _showWarningDialog(context),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -192,87 +226,3 @@ class _PostEditPageState extends State<PostEditPage> {
     })));
   }
 }
-/*    Container(
-        margin: EdgeInsets.all(10.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: currPost.title),
-                validator: (String value) {
-                  if (value.trim().length <= 0) {
-                    return 'Title is required';
-                  }
-                },
-                onSaved: (String value) {
-                  _formData["title"] = value;
-                },
-              ),
-              TextFormField(
-                maxLines: 4,
-                decoration: InputDecoration(labelText: currPost.description),
-                validator: (String value) {
-                  if (value.trim().length <= 0) {
-                    return 'Description is required';
-                  }
-                },
-                onSaved: (String value) {
-                  _formData["description"] = value;
-                },
-              ),
-              TextFormField(
-                  decoration:
-                      new InputDecoration(labelText: currPost.price.toString()),
-                  keyboardType: TextInputType.number),
-              SizedBox(
-                height: 10.0,
-              ),
-              Center(child: Container(child: Text(currPost.date.toString()))),
-              SizedBox(
-                height: 10.0,
-              ),
-              RaisedButton(
-                child: Text('Select Date'),
-                color: Theme.of(context).accentColor,
-                textColor: Colors.white,
-                onPressed: () {
-                  showDatePicker(
-                          firstDate:
-                              DateTime.now().add(new Duration(days: -60)),
-                          lastDate: DateTime.now().add(new Duration(days: 60)),
-                          initialDate: DateTime.now(),
-                          context: context)
-                      .then((DateTime result) {
-                    day = result;
-                  });
-                  ;
-                },
-              ),
-              RaisedButton(
-                child: Text(currPost.date.toString()),
-                color: Theme.of(context).accentColor,
-                textColor: Colors.white,
-                onPressed: () {
-                  showTimePicker(
-                    initialTime: TimeOfDay(hour: 15, minute: 0),
-                    context: context,
-                  ).then((TimeOfDay result) {
-                    day = day.add(
-                        Duration(hours: result.hour, minutes: result.minute));
-                    _formData["date"] = day;
-                  });
-                },
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              _buildSubmitButton(),
-            ],
-          ),
-        ),
-      );
-    })));
-  }
-}
-*/
