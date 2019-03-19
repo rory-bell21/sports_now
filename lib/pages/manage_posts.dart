@@ -18,7 +18,7 @@ class ManagePosts extends StatefulWidget {
 class ManagePostsState extends State<ManagePosts> {
   @override
   void initState() {
-    widget.model.fetchAllPosts();
+    widget.model.fetchPosts();
     super.initState();
   }
 

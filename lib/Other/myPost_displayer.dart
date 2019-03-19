@@ -30,9 +30,9 @@ class MyPostsDisplayer extends StatelessWidget {
                       RaisedButton(
                           child: Text('Edit'),
                           onPressed: () {
-                            model.selectPost(index);
+                            model.selectPost(currPost.id);
                             Navigator.pushNamed<bool>(
-                                context, '/edit/' + index.toString());
+                                context, '/edit/' + currPost.id);
                           }
                           //specifying a page to push to stack?,
                           )

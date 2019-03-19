@@ -8,9 +8,9 @@ import '../types/post.dart';
 //This is the page when u click on a booking or product
 
 class PostPage extends StatelessWidget {
-  final int index;
+  final String postID;
 
-  PostPage(this.index);
+  PostPage(this.postID);
 
   _showWarningDialog(BuildContext context) {
     showDialog(
@@ -49,7 +49,8 @@ class PostPage extends StatelessWidget {
       },
       child: ScopedModelDescendant<MainModel>(
           builder: (BuildContext context, Widget child, MainModel model) {
-        final Post currPost = model.allPosts[index];
+        model.selectPost(postID);
+        final Post currPost = model.selectedPost;
         return Scaffold(
           appBar: AppBar(
             title: Text("Book Now!"),

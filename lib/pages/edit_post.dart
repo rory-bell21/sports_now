@@ -6,8 +6,8 @@ import 'package:sports_now/scoped_models/main_model.dart';
 import '../types/post.dart';
 
 class PostEditPage extends StatefulWidget {
-  final int index;
-  PostEditPage(this.index);
+  final String postID;
+  PostEditPage(this.postID);
 
   @override
   State<StatefulWidget> createState() {
@@ -122,7 +122,8 @@ class _PostEditPageState extends State<PostEditPage> {
       return Future.value(false);
     }, child: Container(child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      final Post currPost = model.posts[widget.index];
+      model.selectPost(widget.postID);
+      final Post currPost = model.selectedPost;
       _formData["price"] = currPost.price;
       _formData["title"] = currPost.title;
       _formData["description"] = currPost.description;

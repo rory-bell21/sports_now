@@ -16,7 +16,7 @@ class MyBookingsPage extends StatefulWidget {
 class MyBookingsPageState extends State<MyBookingsPage> {
   @override
   void initState() {
-    widget.model.fetchAllPosts();
+    widget.model.fetchPosts();
     super.initState();
   }
 

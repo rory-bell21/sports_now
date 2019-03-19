@@ -54,18 +54,20 @@ class _MyAppState extends State<MyApp> {
           //below gets called when name not in routes, dynamically pass data too post page....
           onGenerateRoute: (RouteSettings settings) {
             final List<String> pathElements = settings.name.split('/');
+            print(pathElements);
             if (pathElements[0] != '') {
               return null;
             }
             if (pathElements[1] == 'post') {
-              final int index = int.parse(pathElements[2]);
+              final String postID = pathElements[2];
               return MaterialPageRoute<bool>(
-                builder: (BuildContext context) => PostPage(index),
+                builder: (BuildContext context) => PostPage(postID),
               );
             } else if (pathElements[1] == 'edit') {
-              final int index = int.parse(pathElements[2]);
+              print("innnnnn");
+              final String postID = pathElements[2];
               return MaterialPageRoute<bool>(
-                builder: (BuildContext context) => PostEditPage(index),
+                builder: (BuildContext context) => PostEditPage(postID),
               );
             }
             return null;

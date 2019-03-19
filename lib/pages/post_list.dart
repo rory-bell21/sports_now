@@ -9,6 +9,8 @@ import '../Other/post_displayer.dart';
 
 //this is the main page to scroll through posts
 class PostListPage extends StatefulWidget {
+  String newValue;
+
   final MainModel model;
   PostListPage(this.model);
   @override
@@ -27,7 +29,7 @@ class PostListPageState extends State<PostListPage> {
         filter = controller.text;
       });
     });
-    widget.model.fetchAllPosts();
+    widget.model.fetchPosts();
     super.initState();
   }
 
@@ -39,6 +41,10 @@ class PostListPageState extends State<PostListPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<DropdownMenuItem<String>> filterOptions = [
+      DropdownMenuItem<String>(value: "Date", child: Text("Date")),
+      DropdownMenuItem<String>(value: "Title", child: Text("Title"))
+    ];
     return Scaffold(
         drawer: HamburgerMenu("anything here rn"),
         appBar: AppBar(
@@ -47,8 +53,40 @@ class PostListPageState extends State<PostListPage> {
         body: Column(
           children: [
             TextField(
-              decoration: new InputDecoration(labelText: "Search something"),
+              decoration: InputDecoration(
+                labelText: "",
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(
+                    const Radius.circular(10.0),
+                  ),
+                ),
+              ),
               controller: controller,
+            ),
+            IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                      child: Text(
+                    "Filters",
+                    textAlign: TextAlign.center,
+                    //style: TextStyle(fontWeight: FontWeight.bold)
+                  )),
+                  Expanded(
+                    child: DropdownButton<String>(
+                      value: "Date",
+                      items: filterOptions,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          //CALL A METHOD IN CONNECTED TO SORT
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
             ),
             Expanded(child: PostDisplayer(filter))
           ],

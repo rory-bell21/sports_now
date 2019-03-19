@@ -5,4 +5,5 @@ import 'package:sports_now/types/post.dart';
 import 'package:sports_now/types/user.dart';
 import './connected_posts.dart';
 
-class MainModel extends Model with ConnectedPosts, UserModel, PostsModel {}
+class MainModel extends Model
+    with ConnectedPosts, UserModel, PostsModel, UtilityModel {}

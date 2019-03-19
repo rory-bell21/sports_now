@@ -36,9 +36,9 @@ class PostDisplayer extends StatelessWidget {
                       RaisedButton(
                           child: Text('Book'),
                           onPressed: () {
-                            model.selectPost(index);
+                            model.selectPost(currPost.id);
                             Navigator.pushNamed<bool>(
-                                context, '/post/' + index.toString());
+                                context, '/post/' + currPost.id);
                           }
                           //specifying a page to push to stack?,
                           )
@@ -74,6 +74,7 @@ class PostDisplayer extends StatelessWidget {
     print('[Products Widget] build()');
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
+        model.fetchPosts();
       return _buildPostList(model.allPosts);
     });
   }

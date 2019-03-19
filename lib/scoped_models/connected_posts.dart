@@ -9,9 +9,11 @@ import 'package:http/http.dart' as http;
 mixin ConnectedPosts on Model {
   List<Post> posts = [];
   List<Post> myPosts = [];
+  bool _isLoading = false;
   User authenticatedUser;
   int selPostIndex;
   int selMyPostIndex;
+  String selPostID;
 
   Future<Null> addPost(String title, String description, String selectedRink,
       DateTime date, String img, double price) {
@@ -57,35 +59,33 @@ mixin ConnectedPosts on Model {
   }
 }
 
-//POSTMODEL******************
+//*******************************************************POSTMODEL*******************************************************
 mixin PostsModel on ConnectedPosts {
+  void sortPosts() {
+    allPosts.sort((a, b) => a.title.compareTo(b.title));
+  }
+
+  //get all the posts in a list
   List<Post> get allPosts {
     return List.from(posts); //pass by value
   }
 
-  Future<Null> fetchPosts() {
-    http
-        .get('https://sportsnow-4e1cf.firebaseio.com/posts.json')
-        .then((http.Response response) {
-      final List<Post> fetchedPosts = [];
-      final Map<String, dynamic> postData = json.decode(response.body);
-      postData.forEach((String postID, dynamic postData) {
-        final Post currPost = Post(
-          id: postID,
-          title: postData['title'],
-          description: postData['description'],
-          selectedRink: postData['selectedRink'],
-          price: postData['price'],
-          date: DateTime.parse(postData['date']),
-          img: postData['image'],
-          userID: postData['userID'],
-          userEmail: postData['userEmail'],
-        );
-        fetchedPosts.add(currPost);
-      });
-      posts = fetchedPosts;
-      notifyListeners();
+  //returns the selected post
+  Post get selectedPost {
+    if (selPostID == null) {
+      return null;
+    }
+    return posts.firstWhere((Post post) {
+      return post.id == selPostID;
     });
+  }
+
+  //select a post based on the id
+  void selectPost(String postId) {
+    selPostID = postId;
+    if (postId != null) {
+      notifyListeners();
+    }
   }
 
   Future<Null> updatePost(String title, String description, String selectedRink,
@@ -123,7 +123,7 @@ mixin PostsModel on ConnectedPosts {
   }
 
 //--------------------------------
-  void fetchAllPosts() {
+  void fetchPosts() {
     http
         .get('https://sportsnow-4e1cf.firebaseio.com/posts.json')
         .then((http.Response response) {
@@ -155,29 +155,18 @@ mixin PostsModel on ConnectedPosts {
     notifyListeners();
   }
 
-  Post get selectedMyPost {
+  //do we need?
+  /*Post get selectedMyPost {
     if (selMyPostIndex == null) {
       return null;
     }
     return myPosts[selMyPostIndex];
-  }
+  }*/
+  //int get selectedMyPostIndex {
+  //  return selMyPostIndex;
+  //}
 
-  void selectPost(int index) {
-    selPostIndex = index;
-    notifyListeners();
-  }
-
-  Post get selectedPost {
-    if (selPostIndex == null) {
-      return null;
-    }
-    return posts[selPostIndex];
-  }
-
-  int get selectedMyPostIndex {
-    return selMyPostIndex;
-  }
-
+  //need
   int get selectedPostIndex {
     return selPostIndex;
   }
@@ -196,7 +185,65 @@ mixin PostsModel on ConnectedPosts {
 
 //USER MODEL********************************
 mixin UserModel on ConnectedPosts {
-  void login(String email, String password) {
-    authenticatedUser = User(id: 'vfvfv', email: email, password: password);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    final http.Response response = await http.post(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDXdle-9OnW8ZBFhCrHdq-0Jb9u10Df8k8',
+      body: json.encode(authData),
+      headers: {'Content-Type': 'application/json'},
+    );
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong.';
+    print(responseData);
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded!';
+    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
+      message = 'This email was not found.';
+    } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
+      message = 'The password is invalid.';
+    }
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
+  }
+
+  Future<Map<String, dynamic>> signup(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    final http.Response response = await http.post(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDXdle-9OnW8ZBFhCrHdq-0Jb9u10Df8k8',
+      body: json.encode(authData),
+      headers: {'Content-Type': 'application/json'},
+    );
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong.';
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded!';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email already exists.';
+    }
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
+  }
+}
+mixin UtilityModel on ConnectedPosts {
+  bool get isLoading {
+    return _isLoading;
   }
 }
